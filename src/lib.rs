@@ -8,7 +8,47 @@ pub enum Player {
 
 pub struct Board {
     pub squares: [[Option<Player>; 3]; 3],
-    turn: Player,
+    pub turn: Player,
+}
+
+pub fn has_2filled(arr: [Option<Player>; 3]) -> Option<usize> {
+    let mut filled_squares = vec![];
+    for &x in arr.iter() {
+        if x.is_some() {
+            filled_squares.push(x);
+        }
+    }
+    if filled_squares.len() != 2 {
+        return None;
+    }
+    if filled_squares[0] != filled_squares[1] {
+        return None;
+    }
+    for (i, &x) in arr.iter().enumerate() {
+        if x.is_none() { return Some(i); }
+    }
+    None
+}
+
+pub fn has_2filled_by(arr: [Option<Player>; 3], by: Player) -> Option<usize> {
+    let mut filled_squares = vec![];
+    for &x in arr.iter() {
+        if let Some(square) = x {
+            if square == by {
+                filled_squares.push(x);
+            }
+        }
+    }
+    if filled_squares.len() != 2 {
+        return None;
+    }
+    if filled_squares[0] != filled_squares[1] {
+        return None;
+    }
+    for (i, &x) in arr.iter().enumerate() {
+        if x.is_none() { return Some(i); }
+    }
+    None
 }
 
 impl Board {
@@ -50,27 +90,6 @@ impl Board {
             Player::O => Player::X,
         };
         Ok(())
-    }
-
-    // whether or not an array has 2 squares filled by the same player, with the 3rd unoccupied
-    pub fn arr_has_2filled(&self, row: [Option<Player>; 3], player: Player) -> Option<usize> {
-        let mut filled_squares = vec![];
-        for &x in row.iter() {
-            if x.is_some() {
-                filled_squares.push(x);
-            }
-        }
-        if filled_squares.len() != 2 {
-            return None;
-        }
-        for (i, &x) in row.iter().enumerate() {
-            if x.is_some() && x != Some(player) {
-                return Some(i);
-            } else if x.is_none() {
-                return Some(i);
-            }
-        }
-        None
     }
 
     pub fn get_move() -> (usize, usize) {
