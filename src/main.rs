@@ -2,7 +2,19 @@ use ttt::Board;
 use ttt::Player;
 use std::io::Write;
 
+mod ai;
+
 fn main() {
+    let mut board = Board::new();
+    board.make_move(0, 0);
+    board.make_move(1, 0);
+    board.make_move(0, 2);
+    board.make_move(0, 1);
+    board.print();
+    println!("{:?}", board.arr_has_2filled(board.squares[0], Player::X));
+}
+
+fn _main() {
     let mut board = Board::new();
     println!("welcome!");
     println!("provide movves in the form of \"row# col#\"");

@@ -22,10 +22,12 @@ impl Board {
     pub fn print(&self) {
         for row in self.squares {
             for cell in row {
-                if cell == Some(Player::X) {
-                    print!("X ");
-                } else if cell == Some(Player::O) {
-                    print!("O ");
+                if let Some(player) = cell {
+                    if player == Player::X {
+                        print!("X ");
+                    } else if player == Player::O {
+                        print!("O ");
+                    }
                 } else {
                     print!("_ ");
                 }
@@ -50,6 +52,27 @@ impl Board {
         Ok(())
     }
 
+    // whether or not an array has 2 squares filled by the same player, with the 3rd unoccupied
+    pub fn arr_has_2filled(&self, row: [Option<Player>; 3], player: Player) -> Option<usize> {
+        let mut filled_squares = vec![];
+        for &x in row.iter() {
+            if x.is_some() {
+                filled_squares.push(x);
+            }
+        }
+        if filled_squares.len() != 2 {
+            return None;
+        }
+        for (i, &x) in row.iter().enumerate() {
+            if x.is_some() && x != Some(player) {
+                return Some(i);
+            } else if x.is_none() {
+                return Some(i);
+            }
+        }
+        None
+    }
+
     pub fn get_move() -> (usize, usize) {
         let mut input = String::new();
         io::stdin()
@@ -65,6 +88,12 @@ impl Board {
         let c = coordinates[1] as usize;
 
         (r, c)
+    }
+
+    pub fn get_board_with_placement(&self, player: Player, r: usize, c: usize) -> [[Option<Player>; 3]; 3] {
+        let mut grid = self.squares.clone();
+        grid[r][c] = Some(player);
+        grid
     }
 
     pub fn has_won(&self, player: Player) -> bool {
